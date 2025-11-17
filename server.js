@@ -35,7 +35,8 @@ app.post('/upload-csv', upload.single('file'), (req, res) => {
               row.nip,
               row.status_verifikasi,
               row.created_at,
-              row.jabatan
+              row.jabatan,
+              row.perihal
             ]
           );
         }
