@@ -12,7 +12,7 @@ app.use(express.static('public'));
 
 // Koneksi Railway PostgreSQL
 const pool = new Pool({
-  connectionString: "postgresql://postgres:DIXOzTOqpeQvPNhuXKtwEriggeGuJjIy@yamabiko.proxy.rlwy.net:29574/railway"
+  connectionString: "postgresql://postgres:DIXOzTOqpeQvPNhuXKtwEriggeGuJjIy@yamabiko.proxy.rlwy.net:29574/railway",
   ssl: { rejectUnauthorized: false }
 });
 
