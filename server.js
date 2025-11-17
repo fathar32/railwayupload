@@ -7,20 +7,21 @@ const { Pool } = require('pg');
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
-// 🔹 Connection string PostgreSQL Railway
-// Format biasanya: postgres://user:password@host:port/database
+// Serve frontend dari folder public
+app.use(express.static('public'));
+
+// Koneksi Railway PostgreSQL
 const pool = new Pool({
-  connectionString: "postgresql://postgres:DIXOzTOqpeQvPNhuXKtwEriggeGuJjIy@yamabiko.proxy.rlwy.net:29574/railway",
-  ssl: { rejectUnauthorized: false } // Railway biasanya butuh SSL
+  connectionString: "postgresql://postgres:DIXOzTOqpeQvPNhuXKtwEriggeGuJjIy@yamabiko.proxy.rlwy.net:29574/railway"
+  ssl: { rejectUnauthorized: false }
 });
 
+// Endpoint upload CSV
 app.post('/upload-csv', upload.single('file'), (req, res) => {
   const results = [];
   fs.createReadStream(req.file.path)
     .pipe(csv())
-    .on('data', (row) => {
-      results.push(row);
-    })
+    .on('data', (row) => results.push(row))
     .on('end', async () => {
       try {
         for (const row of results) {
@@ -34,8 +35,7 @@ app.post('/upload-csv', upload.single('file'), (req, res) => {
               row.nip,
               row.status_verifikasi,
               row.created_at,
-              row.jabatan,
-              row.perihal
+              row.jabatan
             ]
           );
         }
@@ -47,4 +47,6 @@ app.post('/upload-csv', upload.single('file'), (req, res) => {
     });
 });
 
-app.listen(3000, () => console.log('Server jalan di port 3000'));
+app.listen(process.env.PORT || 3000, () => {
+  console.log('Server jalan di port 3000');
+});
