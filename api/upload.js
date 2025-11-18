@@ -5,18 +5,13 @@ const fs = require('fs');
 const { Pool } = require('pg');
 
 const app = express();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: '/tmp' }); // gunakan /tmp di Vercel
 
-// Serve frontend dari folder public
-app.use(express.static('public'));
-
-// Koneksi Railway PostgreSQL
 const pool = new Pool({
-  connectionString: "postgresql://postgres:DIXOzTOqpeQvPNhuXKtwEriggeGuJjIy@yamabiko.proxy.rlwy.net:29574/railway",
+  connectionString: postgresql://postgres:DIXOzTOqpeQvPNhuXKtwEriggeGuJjIy@yamabiko.proxy.rlwy.net:29574/railway,
   ssl: { rejectUnauthorized: false }
 });
 
-// Endpoint upload CSV
 app.post('/upload-csv', upload.single('file'), (req, res) => {
   const results = [];
   fs.createReadStream(req.file.path)
@@ -27,27 +22,23 @@ app.post('/upload-csv', upload.single('file'), (req, res) => {
         for (const row of results) {
           await pool.query(
             `INSERT INTO berkas_verifikasi 
-             (nomor_surat, nama_pegawai, nip, status_verifikasi, created_at, jabatan)
-             VALUES ($1, $2, $3, $4, $5, $6)`,
+             (nomor_surat, nama_pegawai, nip, status_verifikasi, created_at, jabatan, perihal)
+             VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
             [
               row.nomor_surat,
               row.nama_pegawai,
               row.nip,
               row.status_verifikasi,
-              row.created_at,
               row.jabatan,
               row.perihal
             ]
           );
         }
-        res.send('✅ Upload sukses, data masuk ke database Railway!');
+        res.status(200).send('✅ Upload sukses!');
       } catch (err) {
-        console.error(err);
-        res.status(500).send('❌ Error saat insert data');
+        res.status(500).send('❌ Database error: ' + err.message);
       }
     });
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Server jalan di port 3000');
-});
+module.exports = app;
