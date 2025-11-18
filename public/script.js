@@ -1,4 +1,3 @@
-
 const form = document.getElementById('uploadForm');
 const resultBox = document.getElementById('result');
 
