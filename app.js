@@ -1,11 +1,11 @@
-onst express = require('express');
+const express = require('express');
 const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
 const { Pool } = require('pg');
 
 const app = express();
-const upload = multer({ dest: '/tmp' }); // gunakan /tmp di Vercel
+const upload = multer({ dest: '/tmp' }); 
 
 const pool = new Pool({
   connectionString: postgresql://postgres:DIXOzTOqpeQvPNhuXKtwEriggeGuJjIy@yamabiko.proxy.rlwy.net:29574/railway,
